@@ -445,6 +445,13 @@ public class BrowserProfile: Profile {
                 if oldValue == syncLock {
                     return
                 }
+
+                if syncLock == 0 {
+                    // If we switch into finished state, save the timestamp so we can naively show when the 
+                    // last sync has ended. Note: This doesn't factor in partial failures.
+                    profile.prefs.setTimestamp(NSDate.now(), forKey: PrefsKeys.KeyLastSyncFinishTime)
+                }
+
                 let notification = syncLock == 0 ? ProfileDidFinishSyncingNotification : ProfileDidStartSyncingNotification
                 NSNotificationCenter.defaultCenter().postNotification(NSNotification(name: notification, object: nil))
             }
